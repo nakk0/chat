@@ -1,61 +1,81 @@
 package com.example;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.ArrayList;
 
 public class MyThread extends Thread {
-    Socket client;
-    ArrayList<MyThread> threads = new ArrayList<>();
+    private Socket client;
+    private ArrayList<MyThread> threads;
+    private DataOutputStream out;
+    private String clientName;
 
     public MyThread(Socket socket, ArrayList<MyThread> threads) {
         this.client = socket;
         this.threads = threads;
     }
 
-    public void run(){
+    public void run() {
+        try {
+            BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(client.getInputStream()));
+            out = new DataOutputStream(client.getOutputStream());
 
-        try{
-            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            DataOutputStream out = new DataOutputStream(client.getOutputStream());   
+            System.out.println("Client connected");
 
-            System.out.println("client connected");
+            clientName = in.readLine();
+            System.out.println("Received name: " + clientName);
 
-            String clientName = in.readLine();
-            System.out.println("Ricevuto nome: " + clientName);
-
-            String choice = "";
-            do{
+            String choice;
+            do {
                 choice = in.readLine();
 
-                if(choice.equals("0")){
+                if (choice.equals("0")) {
+                    out.writeBytes("0\n");
                     String message = in.readLine();
-                    for(MyThread thread : threads){
-                        thread.sendMessage(message, out);
-                    }
-                }
-                //TODO other if in the case of having to send message to a single 
-            }while(!choice.equals("x"));
-            
+                    broadcastMessage(clientName + ": " + message);
+                } else if (choice.equals("1")) {
+                    out.writeBytes("1\n");
 
+                    String recipient = in.readLine();
+                    String message = in.readLine();
+
+                    sendPrivateMessage(clientName, recipient, message);
+                }
+            } while (!choice.equals("2"));
 
             client.close();
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-            System.out.println("Error during server instance");
-            System.exit(1);
-        }
-    }
-
-    public void sendMessage(String m, DataOutputStream out) {
-        try {
-            out.writeBytes(m);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
 
+    public void sendMessage(String message, DataOutputStream out) {
+        try {
+            out.writeBytes(message + "\n");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void broadcastMessage(String message) {
+        for (MyThread thread : threads) {
+            if (thread != this) {
+                thread.sendMessage(message, thread.out);
+            }
+        }
+    }
+
+    private void sendPrivateMessage(String sender, String recipient, String message) {
+        for (MyThread thread : threads) {
+            if (thread != this && thread.getClientName().equals(recipient)) {
+                thread.sendMessage(sender + " (private): " + message, thread.out);
+            }
+        }
+    }
+
+
+    public String getClientName() {
+        return clientName;
     }
 }
