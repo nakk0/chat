@@ -31,12 +31,9 @@ public class MyThread extends Thread {
                 choice = in.readLine();
 
                 if (choice.equals("0")) {
-                    out.writeBytes("0\n");
                     String message = in.readLine();
                     broadcastMessage(clientName + ": " + message);
                 } else if (choice.equals("1")) {
-                    out.writeBytes("1\n");
-
                     String recipient = in.readLine();
                     String message = in.readLine();
 
