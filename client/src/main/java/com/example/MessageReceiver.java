@@ -17,8 +17,14 @@ public class MessageReceiver extends Thread {
                 String message = in.readLine();
                 if(sender.equals("0")){
                     sender = "[System]";
-                    if(message.equals("0"))
+                    if(message.equals("0")){
                         message = "il client inserito non è connesso, premere invio e ritentare";
+                    } else if(message.equals("1")){
+                        while(!(message = in.readLine()).equals("end")){
+                            System.out.println(sender + "(private): " + message);
+                        }
+                        message = "end of list. click enter to continue";
+                    }
                 }
 
                 if (isPrivate.equals("n")) {

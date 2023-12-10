@@ -19,7 +19,7 @@ public class MessageSender extends Thread {
 
             while (running) {
                 System.out.println(
-                        "Scrivere 0 per inviare un messaggio a tutti, 1 per inviare a un singolo, 2 per uscire:");
+                        "Scrivere: \n0 per inviare un messaggio a tutti \n1 per inviare a un singolo \n2 per una lista dei client connessi\n x per uscire:");
                 String choice = scanner.nextLine();
 
                 if (choice.equals("0")) {
@@ -38,8 +38,10 @@ public class MessageSender extends Thread {
                     String message = scanner.nextLine();
                     out.writeBytes(message + "\n");
 
-                } else if (choice.equals("2")) {
+                } else if (choice.equals("2")){
                     out.writeBytes("2\n");
+                } else if (choice.equals("x")) {
+                    out.writeBytes("x\n");
                     running = false;
                     out.close();
                 } else {

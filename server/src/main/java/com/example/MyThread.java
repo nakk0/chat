@@ -44,8 +44,10 @@ public class MyThread extends Thread {
                         sendPrivateMessage("0", clientName, "0");
                     }
                     
+                } else if (choice.equals("2")){
+                    sendClientList();
                 }
-            } while (!choice.equals("2"));
+            } while (!choice.equals("x"));
 
             client.close();
         } catch (Exception e) {
@@ -90,6 +92,25 @@ public class MyThread extends Thread {
             }
         }
         return exists;
+    }
+
+    private void sendClientList(){
+        String connectedClients = "";
+
+        int i = 0;
+        for(MyThread thread : threads){
+            connectedClients += i++ + " - " + 
+                            (thread.getClientName().equals(this.clientName) ? this.clientName + "(you)" : thread.getClientName())
+                            + (i < threads.size() ? "\n" : "");
+        }
+        sendPrivateMessage("0", clientName, "1");
+        try{
+            out.writeBytes(connectedClients + "\n");
+            out.writeBytes("end\n");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
     }
 
     public String getClientName() {
