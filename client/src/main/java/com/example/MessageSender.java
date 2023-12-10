@@ -19,33 +19,44 @@ public class MessageSender extends Thread {
 
             while (running) {
                 System.out.println(
-                        "Scrivere: \n0 per inviare un messaggio a tutti \n1 per inviare a un singolo \n2 per una lista dei client connessi\n x per uscire:");
+                        "Scrivere: \n0 per inviare un messaggio a tutti \n1 per inviare a un singolo \n2 per una lista dei client connessi \nx per uscire:");
                 String choice = scanner.nextLine();
 
-                if (choice.equals("0")) {
-                    System.out.println("Inserire messaggio:");
-                    String message = scanner.nextLine();
-                    out.writeBytes("0\n");
-                    out.writeBytes(message + "\n");
-                } else if (choice.equals("1")) {
-                    out.writeBytes("1\n");
+                switch(choice){
+                    case "0":{
+                        System.out.println("Inserire messaggio:");
+                        String message = scanner.nextLine();
+                        out.writeBytes("0\n");
+                        out.writeBytes(message + "\n");
+                        break;
+                    }
+                    case "1":{
+                        out.writeBytes("1\n");
 
-                    System.out.println("Inserire nome destinatario:");
-                    String recipient = scanner.nextLine();
-                    out.writeBytes(recipient +"\n");
+                        System.out.println("Inserire nome destinatario:");
+                        String recipient = scanner.nextLine();
+                        out.writeBytes(recipient +"\n");
 
-                    System.out.println("Inserire messaggio(se il destinatario non esiste, cliccare invio e riprovare):");
-                    String message = scanner.nextLine();
-                    out.writeBytes(message + "\n");
+                        System.out.println("Inserire messaggio:");
+                        String message = scanner.nextLine();
+                        out.writeBytes(message + "\n");
+                        break;
+                    }
+                    case "2":
+                        out.writeBytes("2\n");
+                        break;
 
-                } else if (choice.equals("2")){
-                    out.writeBytes("2\n");
-                } else if (choice.equals("x")) {
-                    out.writeBytes("x\n");
-                    running = false;
-                    out.close();
-                } else {
-                    System.out.println("input \"" + choice + "\" non è corretto");
+                    case "x":
+                        out.writeBytes("x\n");
+                        running = false;
+                        out.close();
+                    break;
+
+                    case "":
+                        break;
+                        
+                    default:
+                        System.out.println("input \"" + choice + "\" non è corretto");
                 }
             }
         } catch (Exception e) {

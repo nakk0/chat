@@ -24,6 +24,8 @@ public class MessageReceiver extends Thread {
                             System.out.println(sender + "(private): " + message);
                         }
                         message = "end of list. click enter to continue";
+                    } else{
+                        message = "server response error";
                     }
                 }
 
