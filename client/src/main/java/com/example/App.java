@@ -16,14 +16,21 @@ public class App {
 
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("Inserire nome:");
-            String clientName = scanner.nextLine();
+            String clientName = "";
+
+            do{
+                if(clientName.equals("0"))
+                    System.out.println("nome non consentito");
+                System.out.println("Inserire nome:");
+                clientName = scanner.nextLine();
+            }while(clientName.equals("0"));
+            
             out.writeBytes(clientName + "\n");
 
             MessageReceiver messageReceiver = new MessageReceiver(in);
             messageReceiver.start();
 
-            MessageSender messageSender = new MessageSender(out);
+            MessageSender messageSender = new MessageSender(in, out);
             messageSender.start();
 
             messageSender.join();

@@ -32,12 +32,18 @@ public class MyThread extends Thread {
 
                 if (choice.equals("0")) {
                     String message = in.readLine();
-                    broadcastMessage(clientName + ": " + message);
+                    broadcastMessage(clientName, message);
                 } else if (choice.equals("1")) {
                     String recipient = in.readLine();
-                    String message = in.readLine();
+                    String message;
 
-                    sendPrivateMessage(clientName, recipient, message);
+                    if(recipientExists(recipient)){
+                        message = in.readLine();
+                        sendPrivateMessage(clientName, recipient, message);
+                    }else{
+                        sendPrivateMessage("0", clientName, "0");
+                    }
+                    
                 }
             } while (!choice.equals("2"));
 
@@ -47,30 +53,44 @@ public class MyThread extends Thread {
         }
     }
 
-    public void sendMessage(String message, DataOutputStream out) {
+    public void sendMessage(String sender, String isPrivate, String message) {
         try {
+            out.writeBytes(sender + "\n");
+            out.writeBytes(isPrivate + "\n");
             out.writeBytes(message + "\n");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private void broadcastMessage(String message) {
+    private void broadcastMessage(String sender, String message) {
         for (MyThread thread : threads) {
             if (thread != this) {
-                thread.sendMessage(message, thread.out);
+                thread.sendMessage(sender, "n", message);
             }
         }
     }
 
     private void sendPrivateMessage(String sender, String recipient, String message) {
-        for (MyThread thread : threads) {
-            if (thread != this && thread.getClientName().equals(recipient)) {
-                thread.sendMessage(sender + " (private): " + message, thread.out);
+        if (recipientExists(recipient)) {
+            for (MyThread thread : threads) {
+                if (thread.getClientName().equals(recipient)) {
+                    thread.sendMessage(sender, "y", message);
+                }
             }
-        }
+        } 
     }
 
+    private boolean recipientExists(String recipient) {
+        boolean exists = false;
+        for (MyThread thread : threads) {
+            if (thread.getClientName().equals(recipient)) {
+                exists = true;
+                break;
+            }
+        }
+        return exists;
+    }
 
     public String getClientName() {
         return clientName;

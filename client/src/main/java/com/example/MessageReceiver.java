@@ -12,8 +12,22 @@ public class MessageReceiver extends Thread {
     public void run() {
         try {
             while (true) {
-                String s = in.readLine();
-                System.out.println(s);
+                String sender = in.readLine();
+                String isPrivate = in.readLine();
+                String message = in.readLine();
+                if(sender.equals("0")){
+                    sender = "[System]";
+                    if(message.equals("0"))
+                        message = "il client inserito non è connesso, premere invio e ritentare";
+                }
+
+                if (isPrivate.equals("n")) {
+                    System.out.println(sender + ": " + message);
+                } else if (isPrivate.equals("y")) {
+                    System.out.println(sender + "(private): " + message);
+                } else {
+                    System.out.println("Internal error");
+                }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
