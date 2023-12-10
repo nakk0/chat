@@ -10,7 +10,9 @@ public class MessageSender extends Thread {
     public MessageSender(DataOutputStream out) {
         this.out = out;
     }
-
+    //buongiorno prof sono vincenzo, non so se leggerà questo, o quanto possa incidere sul voto
+    //però ho creato un nuovo branch dove ho apportato le correzioni che ci ha fatto in classe
+    //(questo branch non l'ho toccato se non per scrivere questo commento)
     public void run() {
         try {
             Scanner scanner = new Scanner(System.in);
